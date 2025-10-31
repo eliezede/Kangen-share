@@ -1,0 +1,30 @@
+You are an expert full-stack builder inside Databutton AI. Build a production-ready web app called “Kangen Share” — a community platform to request, offer, and share Kangen water.
+
+Must-have features:
+1) Request Water: button → form (quantity, location, preferred time window, notes). Workflow: pending → accepted/rejected → completed/cancelled. Notifications to provider.
+2) Social: follow/unfollow; public profiles (photo, bio, city, availability, rating).
+3) Reviews: 1–5 stars + text, only after a completed request, one per request per reviewer, update rating average.
+4) Messaging: real-time DM and per-request chat, unread counters, in-app notifications.
+5) Availability: interactive calendar (week/month), pick time slots, weekly recurrence, monthly options, exceptions/overrides; search providers by availability + distance.
+
+Databutton specifics:
+- Auth + roles (user, provider, admin).
+- Data tables per schema below; CRUD APIs; guarded actions.
+- Mobile-first responsive UI; accessibility; toasts for success/error.
+- Seed data (sample users, availability, requests, chats, reviews).
+- Admin page (moderation, disable user, remove review).
+- README with setup, env/secrets, and deployment.
+
+Data model (tables):
+users(id, name, email unique, role, photo_url, bio, city, lat, lng, created_at)
+follows(follower_id, followee_id, created_at unique pair)
+message_threads(id, user_a_id, user_b_id, last_message_at, unread_for_a, unread_for_b)
+messages(id, thread_id, sender_id, recipient_id, body, created_at, read_at)
+requests(id, requester_id, provider_id?, qty_liters, location_text, window_start, window_end, notes, status enum, created_at, updated_at)
+reviews(id, request_id, reviewer_id, reviewee_id, rating int, comment, created_at)
+availability_rules(id, user_id, rrule_text, timezone, start_date, end_date?, created_at)
+availability_exceptions(id, user_id, date, start_time, end_time, type enum(add/remove), created_at)
+notifications(id, user_id, type, payload_json, read_at, created_at)
+
+Build order:
+1) Auth & roles; 2) Tables & seed; 3) Profile + availability UI (recurrence); 4) Request flow + notif; 5) Messaging; 6) Reviews; 7) Provider search by availability; 8) Admin; 9) Test plan page with buttons to simulate flows.
