@@ -66,7 +66,7 @@ export function LandingHeader() {
           {isAuthenticated && user ? (
             <>
               {/* Logged in - Show Avatar */}
-              <Link href="/home">
+              <Link href="/">
                 <Button
                   variant="ghost"
                   className="gap-2 px-2 min-h-11"

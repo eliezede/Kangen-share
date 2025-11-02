@@ -12,7 +12,7 @@ export default function Landing() {
 
   const handleGetStarted = () => {
     if (isAuthenticated) {
-      window.location.href = "/home";
+      window.location.href = "/";
     } else {
       window.location.href = "/api/login";
     }
@@ -127,19 +127,17 @@ export default function Landing() {
             <p className="text-sm sm:text-base text-muted-foreground mb-4">
               Browse verified providers in your area, check their ratings, and view their availability
             </p>
-            {isAuthenticated && (
-              <Link href="/providers">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="gap-2 min-h-11"
-                  data-testid="link-providers"
-                >
-                  Browse Providers
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              </Link>
-            )}
+            <Link href="/providers">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="gap-2 min-h-11"
+                data-testid="link-providers"
+              >
+                Browse Providers
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
           </Card>
 
           <Card className="p-6 sm:p-8 text-center hover-elevate">
@@ -150,19 +148,17 @@ export default function Landing() {
             <p className="text-sm sm:text-base text-muted-foreground mb-4">
               Choose your quantity, preferred time window, and add any special notes for your request
             </p>
-            {isAuthenticated && (
-              <Link href="/requests">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="gap-2 min-h-11"
-                  data-testid="link-requests"
-                >
-                  View Requests
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              </Link>
-            )}
+            <Link href="/requests">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="gap-2 min-h-11"
+                data-testid="link-requests"
+              >
+                View Requests
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
           </Card>
 
           <Card className="p-6 sm:p-8 text-center hover-elevate sm:col-span-2 md:col-span-1">
@@ -173,19 +169,17 @@ export default function Landing() {
             <p className="text-sm sm:text-base text-muted-foreground mb-4">
               Chat with your provider, coordinate pickup, and leave reviews to help the community grow
             </p>
-            {isAuthenticated && (
-              <Link href="/messages">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="gap-2 min-h-11"
-                  data-testid="link-messages"
-                >
-                  Open Messages
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              </Link>
-            )}
+            <Link href="/messages">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="gap-2 min-h-11"
+                data-testid="link-messages"
+              >
+                Open Messages
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
           </Card>
         </div>
       </div>
@@ -201,55 +195,78 @@ export default function Landing() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            <div className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-background rounded-md border hover-elevate cursor-pointer" onClick={() => isAuthenticated && (window.location.href = "/providers")}>
-              <div className="flex-shrink-0">
-                <Star className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+            <Link href="/providers">
+              <div 
+                className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-background rounded-md border hover-elevate cursor-pointer" 
+                data-testid="feature-card-reviews"
+              >
+                <div className="flex-shrink-0">
+                  <Star className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Verified Reviews</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Rate and review after every completed request to maintain community trust
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Verified Reviews</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Rate and review after every completed request to maintain community trust
-                </p>
-              </div>
-            </div>
+            </Link>
 
-            <div className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-background rounded-md border hover-elevate cursor-pointer" onClick={() => isAuthenticated && (window.location.href = "/messages")}>
-              <div className="flex-shrink-0">
-                <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+            <Link href="/messages">
+              <div 
+                className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-background rounded-md border hover-elevate cursor-pointer" 
+                data-testid="feature-card-messaging"
+              >
+                <div className="flex-shrink-0">
+                  <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Real-Time Messaging</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Chat directly with providers and requesters to coordinate details
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Real-Time Messaging</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Chat directly with providers and requesters to coordinate details
-                </p>
-              </div>
-            </div>
+            </Link>
 
-            <div className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-background rounded-md border hover-elevate cursor-pointer" onClick={() => isAuthenticated && (window.location.href = "/availability")}>
-              <div className="flex-shrink-0">
-                <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+            <Link href="/availability">
+              <div 
+                className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-background rounded-md border hover-elevate cursor-pointer" 
+                data-testid="feature-card-availability"
+              >
+                <div className="flex-shrink-0">
+                  <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Availability Calendar</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Providers can set recurring schedules and manage their availability
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Availability Calendar</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Providers can set recurring schedules and manage their availability
-                </p>
-              </div>
-            </div>
+            </Link>
 
-            <div className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-background rounded-md border hover-elevate cursor-pointer" onClick={() => isAuthenticated && (window.location.href = "/providers")}>
-              <div className="flex-shrink-0">
-                <Users className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+            <Link href="/providers">
+              <div 
+                className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-background rounded-md border hover-elevate cursor-pointer" 
+                data-testid="feature-card-follow"
+              >
+                <div className="flex-shrink-0">
+                  <Users className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Follow Network</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Build your network by following trusted providers and community members
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Follow Network</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Build your network by following trusted providers and community members
-                </p>
-              </div>
-            </div>
+            </Link>
 
-            <div className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-background rounded-md border hover-elevate">
+            <div 
+              className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-background rounded-md border hover-elevate"
+              data-testid="feature-card-security"
+            >
               <div className="flex-shrink-0">
                 <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
               </div>
@@ -261,17 +278,22 @@ export default function Landing() {
               </div>
             </div>
 
-            <div className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-background rounded-md border hover-elevate cursor-pointer" onClick={() => isAuthenticated && (window.location.href = "/requests")}>
-              <div className="flex-shrink-0">
-                <Droplet className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+            <Link href="/requests">
+              <div 
+                className="flex gap-3 sm:gap-4 p-4 sm:p-6 bg-background rounded-md border hover-elevate cursor-pointer" 
+                data-testid="feature-card-requests"
+              >
+                <div className="flex-shrink-0">
+                  <Droplet className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Track Requests</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Monitor your requests from pending to completed with real-time updates
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Track Requests</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Monitor your requests from pending to completed with real-time updates
-                </p>
-              </div>
-            </div>
+            </Link>
           </div>
         </div>
       </div>

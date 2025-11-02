@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppHeader } from "@/components/app-header";
+import { ProtectedRoute } from "@/components/protected-route";
 import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/components/landing";
 import Home from "@/pages/home";
@@ -24,23 +25,26 @@ interface RouterProps {
 function Router({ isAuthenticated, isLoading }: RouterProps) {
   return (
     <Switch>
-      {isLoading || !isAuthenticated ? (
+      {/* Landing page - always accessible */}
+      {!isAuthenticated && !isLoading ? (
         <Route path="/" component={Landing} />
       ) : (
-        <>
-          <Route path="/" component={Home} />
-          <Route path="/requests" component={Requests} />
-          <Route path="/providers" component={Providers} />
-          <Route path="/messages/:threadId" component={Messages} />
-          <Route path="/messages" component={Messages} />
-          <Route path="/availability" component={Availability} />
-          <Route path="/users/:userId" component={Profile} />
-          <Route path="/profile/:userId" component={Profile} />
-          <Route path="/profile" component={Profile} />
-          <Route path="/notifications" component={Notifications} />
-          <Route path="/admin" component={Admin} />
-        </>
+        <Route path="/" component={(params) => <ProtectedRoute component={Home} {...params} />} />
       )}
+      
+      {/* Protected routes - require authentication */}
+      <Route path="/requests" component={(params) => <ProtectedRoute component={Requests} {...params} />} />
+      <Route path="/providers" component={(params) => <ProtectedRoute component={Providers} {...params} />} />
+      <Route path="/messages/:threadId" component={(params) => <ProtectedRoute component={Messages} {...params} />} />
+      <Route path="/messages" component={(params) => <ProtectedRoute component={Messages} {...params} />} />
+      <Route path="/availability" component={(params) => <ProtectedRoute component={Availability} {...params} />} />
+      <Route path="/users/:userId" component={(params) => <ProtectedRoute component={Profile} {...params} />} />
+      <Route path="/profile/:userId" component={(params) => <ProtectedRoute component={Profile} {...params} />} />
+      <Route path="/profile" component={(params) => <ProtectedRoute component={Profile} {...params} />} />
+      <Route path="/notifications" component={(params) => <ProtectedRoute component={Notifications} {...params} />} />
+      <Route path="/admin" component={(params) => <ProtectedRoute component={Admin} {...params} />} />
+      
+      {/* 404 fallback */}
       <Route component={NotFound} />
     </Switch>
   );
