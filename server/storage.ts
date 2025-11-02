@@ -85,18 +85,42 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
-    const [user] = await db
+    // First try to find user by id if id is provided
+    if (userData.id) {
+      const [existingById] = await db.select().from(users).where(eq(users.id, userData.id));
+      
+      if (existingById) {
+        // User exists with this id, update it
+        const [updated] = await db
+          .update(users)
+          .set({ ...userData, updatedAt: new Date() })
+          .where(eq(users.id, userData.id))
+          .returning();
+        return updated;
+      }
+    }
+    
+    // Check if user exists with this email but different id
+    if (userData.email) {
+      const [existingByEmail] = await db.select().from(users).where(eq(users.email, userData.email));
+      
+      if (existingByEmail) {
+        // Update existing user with new id from OIDC
+        const [updated] = await db
+          .update(users)
+          .set({ ...userData, updatedAt: new Date() })
+          .where(eq(users.email, userData.email))
+          .returning();
+        return updated;
+      }
+    }
+    
+    // No existing user, create new one
+    const [newUser] = await db
       .insert(users)
       .values(userData)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
-          ...userData,
-          updatedAt: new Date(),
-        },
-      })
       .returning();
-    return user;
+    return newUser;
   }
 
   async updateUserProfile(id: string, data: { role?: "user" | "provider" | "admin"; bio?: string; city?: string }): Promise<User | undefined> {
@@ -145,10 +169,36 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Review operations
-  async getReviewsByUser(userId: string): Promise<Review[]> {
+  async getReviewsByUser(userId: string): Promise<any[]> {
     return db
-      .select()
+      .select({
+        id: reviews.id,
+        requestId: reviews.requestId,
+        reviewerId: reviews.reviewerId,
+        revieweeId: reviews.revieweeId,
+        rating: reviews.rating,
+        comment: reviews.comment,
+        createdAt: reviews.createdAt,
+        reviewer: {
+          id: users.id,
+          email: users.email,
+          firstName: users.firstName,
+          lastName: users.lastName,
+          profileImageUrl: users.profileImageUrl,
+          role: users.role,
+          bio: users.bio,
+          city: users.city,
+          lat: users.lat,
+          lng: users.lng,
+          rating: users.rating,
+          reviewCount: users.reviewCount,
+          isActive: users.isActive,
+          createdAt: users.createdAt,
+          updatedAt: users.updatedAt,
+        },
+      })
       .from(reviews)
+      .leftJoin(users, eq(reviews.reviewerId, users.id))
       .where(eq(reviews.revieweeId, userId))
       .orderBy(desc(reviews.createdAt));
   }
@@ -227,12 +277,29 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Message operations
-  async getMessageThreads(userId: string): Promise<MessageThread[]> {
-    return db
+  async getMessageThreads(userId: string): Promise<any[]> {
+    // Get all threads for the user
+    const rawThreads = await db
       .select()
       .from(messageThreads)
       .where(or(eq(messageThreads.userAId, userId), eq(messageThreads.userBId, userId)))
       .orderBy(desc(messageThreads.lastMessageAt));
+
+    // For each thread, fetch the user data
+    const threadsWithUsers = await Promise.all(
+      rawThreads.map(async (thread) => {
+        const [userA] = await db.select().from(users).where(eq(users.id, thread.userAId));
+        const [userB] = await db.select().from(users).where(eq(users.id, thread.userBId));
+        
+        return {
+          ...thread,
+          userA,
+          userB,
+        };
+      })
+    );
+
+    return threadsWithUsers;
   }
 
   async getMessageThread(id: string): Promise<MessageThread | undefined> {

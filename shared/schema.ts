@@ -310,6 +310,9 @@ export const insertRequestSchema = createInsertSchema(requests).omit({
   updatedAt: true,
   status: true,
   providerId: true,
+}).extend({
+  windowStart: z.union([z.date(), z.string().transform((val) => new Date(val))]),
+  windowEnd: z.union([z.date(), z.string().transform((val) => new Date(val))]),
 });
 
 export const updateRequestSchema = z.object({
@@ -334,11 +337,15 @@ export const insertMessageSchema = createInsertSchema(messages).omit({
 export const insertAvailabilityRuleSchema = createInsertSchema(availabilityRules).omit({
   id: true,
   createdAt: true,
+}).extend({
+  startDate: z.union([z.date(), z.string().transform((val) => new Date(val))]),
 });
 
 export const insertAvailabilityExceptionSchema = createInsertSchema(availabilityExceptions).omit({
   id: true,
   createdAt: true,
+}).extend({
+  date: z.union([z.date(), z.string().transform((val) => new Date(val))]),
 });
 
 export const insertNotificationSchema = createInsertSchema(notifications).omit({
