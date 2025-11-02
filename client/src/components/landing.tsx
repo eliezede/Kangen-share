@@ -3,10 +3,12 @@ import { Card } from "@/components/ui/card";
 import { Droplet, Users, Calendar, Star, MessageCircle, Shield, Mail } from "lucide-react";
 import { SiGoogle, SiGithub, SiX, SiApple } from "react-icons/si";
 import heroImage from "@assets/generated_images/Community_water_sharing_hero_image_3fe39fc1.png";
+import { LandingHeader } from "@/components/landing-header";
 
 export default function Landing() {
   return (
     <div className="min-h-screen bg-background">
+      <LandingHeader />
       {/* Hero Section */}
       <div className="relative h-[70vh] md:h-[60vh] overflow-hidden">
         <div 
@@ -92,7 +94,7 @@ export default function Landing() {
         </div>
       </div>
       {/* How It Works Section */}
-      <div className="max-w-7xl mx-auto px-4 py-16 md:py-24">
+      <div id="how-it-works" className="max-w-7xl mx-auto px-4 py-16 md:py-24">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -133,7 +135,7 @@ export default function Landing() {
         </div>
       </div>
       {/* Features Section */}
-      <div className="bg-card/50 py-16 md:py-24">
+      <div id="features" className="bg-card/50 py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Community-First Features</h2>
@@ -218,7 +220,7 @@ export default function Landing() {
         </div>
       </div>
       {/* CTA Section */}
-      <div className="max-w-4xl mx-auto px-4 py-16 md:py-24 text-center">
+      <div id="cta" className="max-w-4xl mx-auto px-4 py-16 md:py-24 text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Join the Community?</h2>
         <p className="text-lg text-muted-foreground mb-8">
           Start sharing Kangen water with your neighbors today

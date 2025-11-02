@@ -6,7 +6,16 @@ Kangen Share is a community-driven web platform that enables users to request, o
 
 ## Recent Changes (November 2, 2025)
 
-### Mobile Optimization (Latest)
+### Landing Page Header (Latest)
+- **Responsive navigation header**: Clean, modern header for landing page
+  - Desktop: Logo left, visible navigation menu (How It Works, Features, Get Started), Login/Avatar right
+  - Mobile: Logo left, hamburger menu right, Login icon button
+  - Smooth scroll navigation to sections on the landing page
+  - Authentication-aware: Shows Login button when not authenticated, Avatar when logged in
+  - Sticky header with backdrop blur effect for modern appearance
+  - All touch targets meet 44px minimum accessibility requirement
+
+### Mobile Optimization
 - **Comprehensive mobile-first redesign**: Optimized for iPhone X and small screens (375px width)
 - **Touch target accessibility**: All interactive elements now meet 44px minimum requirement
   - Mobile menu items: 48px height
