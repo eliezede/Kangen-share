@@ -44,7 +44,7 @@ export default function Landing() {
           </div>
           
           {/* Login Methods */}
-          <div className="mt-8 flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center gap-3 mt-[18px] mb-[18px]">
             <p className="text-sm text-white/70">Sign in with:</p>
             <div className="flex items-center gap-4" role="list" aria-label="Available login methods">
               <button 
@@ -91,7 +91,6 @@ export default function Landing() {
           </div>
         </div>
       </div>
-
       {/* How It Works Section */}
       <div className="max-w-7xl mx-auto px-4 py-16 md:py-24">
         <div className="text-center mb-12">
@@ -133,7 +132,6 @@ export default function Landing() {
           </Card>
         </div>
       </div>
-
       {/* Features Section */}
       <div className="bg-card/50 py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4">
@@ -219,7 +217,6 @@ export default function Landing() {
           </div>
         </div>
       </div>
-
       {/* CTA Section */}
       <div className="max-w-4xl mx-auto px-4 py-16 md:py-24 text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Join the Community?</h2>
