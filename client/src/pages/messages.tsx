@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useParams } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,11 +26,19 @@ type MessageWithSender = Message & {
 };
 
 export default function Messages() {
+  const { threadId: urlThreadId } = useParams<{ threadId?: string }>();
   const { user } = useAuth();
   const { toast } = useToast();
-  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
+  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(urlThreadId || null);
   const [messageInput, setMessageInput] = useState("");
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  // Update selectedThreadId when URL changes
+  useEffect(() => {
+    if (urlThreadId) {
+      setSelectedThreadId(urlThreadId);
+    }
+  }, [urlThreadId]);
 
   const { data: threads, isLoading: threadsLoading } = useQuery<ThreadWithUsers[]>({
     queryKey: ["/api/messages/threads"],

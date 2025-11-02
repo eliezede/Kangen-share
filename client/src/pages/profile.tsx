@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useParams } from "wouter";
+import { useParams, useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,11 +11,12 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Star, MapPin, Calendar, UserPlus, UserCheck, MessageCircle, Edit } from "lucide-react";
-import type { User, Review } from "@shared/schema";
+import { Star, MapPin, Calendar, UserPlus, UserCheck, MessageCircle, Droplet } from "lucide-react";
+import type { User, Review, MessageThread, Request } from "@shared/schema";
 import { Link } from "wouter";
 
 type ReviewWithUser = Review & {
@@ -53,9 +54,12 @@ export default function Profile() {
     enabled: !!profileUserId,
   });
 
+  const [, navigate] = useLocation();
+  const [requestDialogOpen, setRequestDialogOpen] = useState(false);
+
   const updateMutation = useMutation({
-    mutationFn: async (data: { role?: string; bio?: string; city?: string }) => {
-      await apiRequest("PATCH", "/api/users/profile", data);
+    mutationFn: async (data: any) => {
+      await apiRequest("PUT", "/api/users/me", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
@@ -78,9 +82,63 @@ export default function Profile() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     updateMutation.mutate({
-      role: formData.get("role") as string || undefined,
+      firstName: formData.get("firstName") as string || undefined,
+      lastName: formData.get("lastName") as string || undefined,
+      email: formData.get("email") as string || undefined,
+      phone: formData.get("phone") as string || undefined,
+      address: formData.get("address") as string || undefined,
       bio: formData.get("bio") as string || undefined,
       city: formData.get("city") as string || undefined,
+    });
+  };
+
+  const messageMutation = useMutation({
+    mutationFn: async (otherUserId: string) => {
+      const response = await apiRequest("POST", "/api/messages/thread", { otherUserId });
+      return response.json() as Promise<MessageThread>;
+    },
+    onSuccess: (thread) => {
+      navigate(`/messages/${thread.id}`);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const createRequestMutation = useMutation({
+    mutationFn: async (data: any) => {
+      await apiRequest("POST", "/api/requests", data);
+    },
+    onSuccess: () => {
+      setRequestDialogOpen(false);
+      toast({
+        title: "Request sent",
+        description: "Your water request has been sent to the provider",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/requests"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleRequestSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    createRequestMutation.mutate({
+      providerId: profileUserId,
+      quantity: Number(formData.get("quantity")),
+      pickupTimeStart: new Date(formData.get("pickupTimeStart") as string).toISOString(),
+      pickupTimeEnd: new Date(formData.get("pickupTimeEnd") as string).toISOString(),
+      notes: formData.get("notes") as string || undefined,
     });
   };
 
@@ -168,14 +226,92 @@ export default function Profile() {
                 </div>
                 {!isOwnProfile && (
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => messageMutation.mutate(profileUser.id)}
+                      disabled={messageMutation.isPending}
+                      data-testid="button-message-user"
+                    >
                       <MessageCircle className="w-4 h-4 mr-2" />
-                      Message
+                      {messageMutation.isPending ? "Loading..." : "Message"}
                     </Button>
-                    <Button variant="default" size="sm">
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      Follow
-                    </Button>
+                    {profileUser.role === "provider" && (
+                      <Dialog open={requestDialogOpen} onOpenChange={setRequestDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button variant="default" size="sm" data-testid="button-request-water">
+                            <Droplet className="w-4 h-4 mr-2" />
+                            Request Water
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Request Water from {profileUser.firstName}</DialogTitle>
+                            <DialogDescription>Fill out the form below to request Kangen water</DialogDescription>
+                          </DialogHeader>
+                          <form onSubmit={handleRequestSubmit} className="space-y-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="quantity">Quantity (liters)</Label>
+                              <Input
+                                id="quantity"
+                                name="quantity"
+                                type="number"
+                                min="1"
+                                required
+                                placeholder="5"
+                                data-testid="input-request-quantity"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="pickupTimeStart">Pickup Time Start</Label>
+                              <Input
+                                id="pickupTimeStart"
+                                name="pickupTimeStart"
+                                type="datetime-local"
+                                required
+                                data-testid="input-request-start"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="pickupTimeEnd">Pickup Time End</Label>
+                              <Input
+                                id="pickupTimeEnd"
+                                name="pickupTimeEnd"
+                                type="datetime-local"
+                                required
+                                data-testid="input-request-end"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="notes">Notes (optional)</Label>
+                              <Textarea
+                                id="notes"
+                                name="notes"
+                                placeholder="Any special instructions or preferences..."
+                                data-testid="input-request-notes"
+                              />
+                            </div>
+                            <div className="flex gap-2 justify-end">
+                              <Button 
+                                type="button" 
+                                variant="outline" 
+                                onClick={() => setRequestDialogOpen(false)}
+                                data-testid="button-cancel-request"
+                              >
+                                Cancel
+                              </Button>
+                              <Button 
+                                type="submit" 
+                                disabled={createRequestMutation.isPending}
+                                data-testid="button-submit-request"
+                              >
+                                {createRequestMutation.isPending ? "Sending..." : "Send Request"}
+                              </Button>
+                            </div>
+                          </form>
+                        </DialogContent>
+                      </Dialog>
+                    )}
                   </div>
                 )}
               </div>
@@ -203,17 +339,63 @@ export default function Profile() {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="firstName">First Name</Label>
+                      <Input
+                        id="firstName"
+                        name="firstName"
+                        defaultValue={profileUser.firstName || ""}
+                        placeholder="John"
+                        data-testid="input-firstName"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="lastName">Last Name</Label>
+                      <Input
+                        id="lastName"
+                        name="lastName"
+                        defaultValue={profileUser.lastName || ""}
+                        placeholder="Doe"
+                        data-testid="input-lastName"
+                      />
+                    </div>
+                  </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="role">Role</Label>
-                    <Select name="role" defaultValue={profileUser.role}>
-                      <SelectTrigger id="role" data-testid="select-role">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="user">User</SelectItem>
-                        <SelectItem value="provider">Provider</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      defaultValue={profileUser.email || ""}
+                      placeholder="john.doe@example.com"
+                      data-testid="input-email"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      defaultValue={profileUser.phone || ""}
+                      placeholder="+1 (555) 123-4567"
+                      data-testid="input-phone"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="address">Address</Label>
+                    <Input
+                      id="address"
+                      name="address"
+                      defaultValue={profileUser.address || ""}
+                      placeholder="123 Main St, Apt 4B"
+                      data-testid="input-address"
+                    />
                   </div>
 
                   <div className="space-y-2">

@@ -294,6 +294,16 @@ export const upsertUserSchema = createInsertSchema(users).pick({
   profileImageUrl: true,
 });
 
+export const updateOwnProfileSchema = z.object({
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  email: z.string().email().optional(),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  bio: z.string().optional(),
+  city: z.string().optional(),
+});
+
 export const updateUserProfileSchema = z.object({
   role: z.enum(["user", "provider", "admin"]).optional(),
   bio: z.string().optional(),

@@ -9,6 +9,7 @@ import {
   insertReviewSchema,
   insertFollowSchema,
   insertMessageSchema,
+  updateOwnProfileSchema,
   updateUserProfileSchema,
   insertAvailabilityRuleSchema,
   insertAvailabilityExceptionSchema,
@@ -47,16 +48,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put('/api/users/me', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const { firstName, lastName, phone, address, bio, city, email } = req.body;
-      const user = await storage.updateUser(userId, { 
-        firstName, 
-        lastName, 
-        phone, 
-        address, 
-        bio, 
-        city,
-        email 
-      });
+      const validatedData = updateOwnProfileSchema.parse(req.body);
+      const user = await storage.updateUser(userId, validatedData);
       res.json(user);
     } catch (error: any) {
       console.error("Error updating user:", error);

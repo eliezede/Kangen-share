@@ -31,10 +31,12 @@ function Router({ isAuthenticated, isLoading }: RouterProps) {
           <Route path="/" component={Home} />
           <Route path="/requests" component={Requests} />
           <Route path="/providers" component={Providers} />
+          <Route path="/messages/:threadId" component={Messages} />
           <Route path="/messages" component={Messages} />
           <Route path="/availability" component={Availability} />
           <Route path="/profile" component={Profile} />
           <Route path="/profile/:userId" component={Profile} />
+          <Route path="/users/:userId" component={Profile} />
           <Route path="/notifications" component={Notifications} />
           <Route path="/admin" component={Admin} />
         </>
