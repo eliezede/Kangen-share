@@ -6,6 +6,22 @@ Kangen Share is a community-driven web platform that enables users to request, o
 
 ## Recent Changes (November 2, 2025)
 
+### Mobile Optimization (Latest)
+- **Comprehensive mobile-first redesign**: Optimized for iPhone X and small screens (375px width)
+- **Touch target accessibility**: All interactive elements now meet 44px minimum requirement
+  - Mobile menu items: 48px height
+  - Landing page CTAs (Get Started, Browse Providers, Join Now): 48px height
+  - Social login buttons: 44x44px squares
+  - Provider card buttons and icons: 44px minimum
+  - Dialog buttons: Full width on mobile with proper heights
+- **Responsive spacing**: Consistent p-4 md:p-6 pattern across all pages
+- **Responsive typography**: Headers scale from text-2xl to text-3xl/4xl on larger screens
+- **Mobile dialogs**: All dialogs scrollable with max-h-[90vh] for small screens
+- **Button groups**: Stack vertically on mobile (flex-col sm:flex-row)
+- **Grid layouts**: Single column on mobile, expanding on larger screens
+- **Icon sizing**: Increased from 16px to 20px for better mobile visibility
+
+### Previous Changes
 - **All users are providers**: Removed role-based provider designation; all users can receive water requests
 - **Follow system**: Added follow/unfollow buttons to user profile pages with real-time status updates
 - **Request Water form fixed**: Corrected field names to match schema (qtyLiters, locationText, windowStart, windowEnd)
