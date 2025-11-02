@@ -80,10 +80,10 @@ export default function Providers() {
   });
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-4 md:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Find Providers</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">Find Providers</h1>
+        <p className="text-sm md:text-base text-muted-foreground">
           Browse and connect with trusted water providers in your community
         </p>
       </div>
@@ -100,7 +100,7 @@ export default function Providers() {
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {[...Array(6)].map((_, i) => (
             <Card key={i}>
               <CardContent className="pt-6">
@@ -115,7 +115,7 @@ export default function Providers() {
           ))}
         </div>
       ) : filteredProviders && filteredProviders.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {filteredProviders.map((provider) => (
             <Card 
               key={provider.id} 
@@ -161,7 +161,7 @@ export default function Providers() {
                   )}
 
                   <div className="flex gap-2 w-full mt-auto">
-                    <Button variant="outline" className="flex-1" asChild>
+                    <Button variant="outline" className="flex-1 min-h-11" asChild>
                       <Link href={`/profile/${provider.id}`}>
                         View Profile
                       </Link>
@@ -174,8 +174,9 @@ export default function Providers() {
                           onClick={() => unfollowMutation.mutate(provider.id)}
                           disabled={unfollowMutation.isPending}
                           data-testid={`button-unfollow-${provider.id}`}
+                          className="min-h-11 min-w-11"
                         >
-                          <UserCheck className="w-4 h-4" />
+                          <UserCheck className="w-5 h-5" />
                         </Button>
                       ) : (
                         <Button
@@ -184,8 +185,9 @@ export default function Providers() {
                           onClick={() => followMutation.mutate(provider.id)}
                           disabled={followMutation.isPending}
                           data-testid={`button-follow-${provider.id}`}
+                          className="min-h-11 min-w-11"
                         >
-                          <UserPlus className="w-4 h-4" />
+                          <UserPlus className="w-5 h-5" />
                         </Button>
                       )
                     )}

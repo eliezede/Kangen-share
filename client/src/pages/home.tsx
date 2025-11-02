@@ -45,13 +45,13 @@ export default function Home() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-8">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6 md:space-y-8">
       {/* Welcome Header */}
       <div>
-        <h1 className="text-3xl font-bold mb-2" data-testid="text-welcome">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2" data-testid="text-welcome">
           Welcome back, {user?.firstName || "there"}!
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-sm md:text-base text-muted-foreground">
           {user?.role === "provider" 
             ? "Manage your availability and respond to water requests from your community"
             : "Request water from trusted providers in your area"}
@@ -59,7 +59,7 @@ export default function Home() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Requests</CardTitle>
@@ -106,21 +106,21 @@ export default function Home() {
           <CardTitle>Quick Actions</CardTitle>
           <CardDescription>Common tasks to get started</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-wrap gap-3">
-          <Button asChild data-testid="button-request-water">
+        <CardContent className="flex flex-col sm:flex-row flex-wrap gap-3">
+          <Button asChild data-testid="button-request-water" className="w-full sm:w-auto">
             <Link href="/requests/new">
               <Droplet className="w-4 h-4 mr-2" />
               Request Water
             </Link>
           </Button>
-          <Button variant="secondary" asChild data-testid="button-find-providers">
+          <Button variant="secondary" asChild data-testid="button-find-providers" className="w-full sm:w-auto">
             <Link href="/providers">
               <Users className="w-4 h-4 mr-2" />
               Find Providers
             </Link>
           </Button>
           {user?.role === "provider" && (
-            <Button variant="secondary" asChild data-testid="button-manage-availability">
+            <Button variant="secondary" asChild data-testid="button-manage-availability" className="w-full sm:w-auto">
               <Link href="/availability">
                 <Clock className="w-4 h-4 mr-2" />
                 Manage Availability
@@ -184,7 +184,7 @@ export default function Home() {
             <div className="text-center py-12">
               <Droplet className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
               <p className="text-muted-foreground">No requests yet</p>
-              <Button variant="link" asChild className="mt-2">
+              <Button variant="ghost" asChild className="mt-2">
                 <Link href="/requests/new">Create your first request</Link>
               </Button>
             </div>

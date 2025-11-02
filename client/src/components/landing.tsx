@@ -26,7 +26,7 @@ export default function Landing() {
             <Button 
               size="lg" 
               variant="default"
-              className="text-base px-8"
+              className="text-base px-8 min-h-12"
               data-testid="button-get-started"
               onClick={() => window.location.href = "/api/login"}
             >
@@ -35,7 +35,7 @@ export default function Landing() {
             <Button 
               size="lg" 
               variant="outline"
-              className="text-base px-8 bg-background/20 backdrop-blur-sm border-white/30 text-white hover:bg-background/30"
+              className="text-base px-8 min-h-12 bg-background/20 backdrop-blur-sm border-white/30 text-white hover:bg-background/30"
               data-testid="button-browse-providers"
               onClick={() => window.location.href = "/api/login"}
             >
@@ -46,9 +46,9 @@ export default function Landing() {
           {/* Login Methods */}
           <div className="flex flex-col items-center gap-3 mt-[18px] mb-[18px]">
             <p className="text-sm text-white/70">Sign in with:</p>
-            <div className="flex items-center gap-4" role="list" aria-label="Available login methods">
+            <div className="flex items-center gap-3" role="list" aria-label="Available login methods">
               <button 
-                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110 cursor-pointer" 
+                className="w-11 h-11 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110 cursor-pointer" 
                 data-testid="icon-login-google"
                 aria-label="Sign in with Google"
                 onClick={() => window.location.href = "/api/login"}
@@ -56,7 +56,7 @@ export default function Landing() {
                 <SiGoogle className="w-5 h-5 text-white" aria-hidden="true" />
               </button>
               <button 
-                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110 cursor-pointer" 
+                className="w-11 h-11 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110 cursor-pointer" 
                 data-testid="icon-login-github"
                 aria-label="Sign in with GitHub"
                 onClick={() => window.location.href = "/api/login"}
@@ -64,7 +64,7 @@ export default function Landing() {
                 <SiGithub className="w-5 h-5 text-white" aria-hidden="true" />
               </button>
               <button 
-                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110 cursor-pointer" 
+                className="w-11 h-11 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110 cursor-pointer" 
                 data-testid="icon-login-x"
                 aria-label="Sign in with X (Twitter)"
                 onClick={() => window.location.href = "/api/login"}
@@ -72,7 +72,7 @@ export default function Landing() {
                 <SiX className="w-5 h-5 text-white" aria-hidden="true" />
               </button>
               <button 
-                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110 cursor-pointer" 
+                className="w-11 h-11 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110 cursor-pointer" 
                 data-testid="icon-login-apple"
                 aria-label="Sign in with Apple"
                 onClick={() => window.location.href = "/api/login"}
@@ -80,7 +80,7 @@ export default function Landing() {
                 <SiApple className="w-5 h-5 text-white" aria-hidden="true" />
               </button>
               <button 
-                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110 cursor-pointer" 
+                className="w-11 h-11 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110 cursor-pointer" 
                 data-testid="icon-login-email"
                 aria-label="Sign in with Email and Password"
                 onClick={() => window.location.href = "/api/login"}
@@ -225,7 +225,7 @@ export default function Landing() {
         </p>
         <Button 
           size="lg" 
-          className="text-base px-8"
+          className="text-base px-8 min-h-12"
           data-testid="button-join-now"
           onClick={() => window.location.href = "/api/login"}
         >

@@ -177,11 +177,11 @@ export function AppHeader() {
                   <Link key={item.url} href={item.url}>
                     <Button
                       variant={isActive(item.url) ? "default" : "ghost"}
-                      className="w-full justify-start gap-2"
+                      className="w-full justify-start gap-2 min-h-12"
                       data-testid={`mobile-${item.testId}`}
                     >
-                      <item.icon className="w-4 h-4" />
-                      <span>{item.title}</span>
+                      <item.icon className="w-5 h-5" />
+                      <span className="text-base">{item.title}</span>
                     </Button>
                   </Link>
                 ))}

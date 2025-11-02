@@ -215,22 +215,22 @@ export default function Availability() {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-4 md:space-y-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Availability Calendar</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">Availability Calendar</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
             Manage your availability for water sharing requests
           </p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button data-testid="button-add-availability">
+            <Button data-testid="button-add-availability" className="w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               Add Availability
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add Availability Rule</DialogTitle>
               <DialogDescription>
@@ -254,7 +254,7 @@ export default function Availability() {
                   ))}
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Start Time</Label>
                   <Select value={startTime} onValueChange={setStartTime}>
@@ -287,8 +287,8 @@ export default function Availability() {
                 </div>
               </div>
             </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+            <DialogFooter className="flex-col sm:flex-row gap-2">
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="w-full sm:w-auto">
                 Cancel
               </Button>
               <Button 

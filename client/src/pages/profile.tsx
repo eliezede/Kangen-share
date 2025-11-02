@@ -197,7 +197,7 @@ export default function Profile() {
 
   if (authLoading || profileLoading) {
     return (
-      <div className="p-6 max-w-5xl mx-auto space-y-6">
+      <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-4 md:space-y-6">
         <Card>
           <CardContent className="pt-6">
             <div className="flex flex-col md:flex-row gap-6">
@@ -216,7 +216,7 @@ export default function Profile() {
 
   if (!profileUser) {
     return (
-      <div className="p-6 max-w-5xl mx-auto">
+      <div className="p-4 md:p-6 max-w-5xl mx-auto">
         <Card>
           <CardContent className="py-12 text-center">
             <p className="text-muted-foreground">User not found</p>
@@ -227,7 +227,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
+    <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-4 md:space-y-6">
       {/* Profile Header */}
       <Card>
         <CardContent className="pt-6">
@@ -240,12 +240,12 @@ export default function Profile() {
             </Avatar>
 
             <div className="flex-1">
-              <div className="flex items-start justify-between gap-4 mb-4">
-                <div>
-                  <h1 className="text-3xl font-bold mb-2" data-testid="text-profile-name">
+              <div className="flex flex-col sm:flex-row items-start justify-between gap-4 mb-4">
+                <div className="flex-1 w-full">
+                  <h1 className="text-2xl md:text-3xl font-bold mb-2" data-testid="text-profile-name">
                     {profileUser.firstName} {profileUser.lastName}
                   </h1>
-                  <div className="flex flex-wrap gap-3 mb-2">
+                  <div className="flex flex-wrap gap-2 md:gap-3 mb-2">
                     <Badge variant="secondary" className="capitalize">
                       {profileUser.role}
                     </Badge>
@@ -273,7 +273,7 @@ export default function Profile() {
                   </div>
                 </div>
                 {!isOwnProfile && (
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                     {isFollowing?.isFollowing ? (
                       <Button 
                         variant="secondary" 
@@ -281,6 +281,7 @@ export default function Profile() {
                         onClick={() => unfollowMutation.mutate(profileUser.id)}
                         disabled={unfollowMutation.isPending}
                         data-testid="button-unfollow-user"
+                        className="w-full sm:w-auto"
                       >
                         <UserCheck className="w-4 h-4 mr-2" />
                         {unfollowMutation.isPending ? "Unfollowing..." : "Following"}
@@ -292,6 +293,7 @@ export default function Profile() {
                         onClick={() => followMutation.mutate(profileUser.id)}
                         disabled={followMutation.isPending}
                         data-testid="button-follow-user"
+                        className="w-full sm:w-auto"
                       >
                         <UserPlus className="w-4 h-4 mr-2" />
                         {followMutation.isPending ? "Following..." : "Follow"}
@@ -303,18 +305,19 @@ export default function Profile() {
                       onClick={() => messageMutation.mutate(profileUser.id)}
                       disabled={messageMutation.isPending}
                       data-testid="button-message-user"
+                      className="w-full sm:w-auto"
                     >
                       <MessageCircle className="w-4 h-4 mr-2" />
                       {messageMutation.isPending ? "Loading..." : "Message"}
                     </Button>
                     <Dialog open={requestDialogOpen} onOpenChange={setRequestDialogOpen}>
                       <DialogTrigger asChild>
-                        <Button variant="default" size="sm" data-testid="button-request-water">
+                        <Button variant="default" size="sm" data-testid="button-request-water" className="w-full sm:w-auto">
                           <Droplet className="w-4 h-4 mr-2" />
                           Request Water
                         </Button>
                       </DialogTrigger>
-                        <DialogContent>
+                        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
                           <DialogHeader>
                             <DialogTitle>Request Water from {profileUser.firstName}</DialogTitle>
                             <DialogDescription>Fill out the form below to request Kangen water</DialogDescription>
@@ -372,12 +375,13 @@ export default function Profile() {
                                 data-testid="input-request-notes"
                               />
                             </div>
-                            <div className="flex gap-2 justify-end">
+                            <div className="flex flex-col sm:flex-row gap-2 justify-end">
                               <Button 
                                 type="button" 
                                 variant="outline" 
                                 onClick={() => setRequestDialogOpen(false)}
                                 data-testid="button-cancel-request"
+                                className="w-full sm:w-auto"
                               >
                                 Cancel
                               </Button>
@@ -385,6 +389,7 @@ export default function Profile() {
                                 type="submit" 
                                 disabled={createRequestMutation.isPending}
                                 data-testid="button-submit-request"
+                                className="w-full sm:w-auto"
                               >
                                 {createRequestMutation.isPending ? "Sending..." : "Send Request"}
                               </Button>

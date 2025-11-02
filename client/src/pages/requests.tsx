@@ -101,22 +101,22 @@ export default function Requests() {
   });
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-4 md:space-y-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Water Requests</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">Water Requests</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
             Manage your water sharing requests
           </p>
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button data-testid="button-create-request">
+            <Button data-testid="button-create-request" className="w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               New Request
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
             <form onSubmit={handleSubmit}>
               <DialogHeader>
                 <DialogTitle>Request Water</DialogTitle>
@@ -148,7 +148,7 @@ export default function Requests() {
                     data-testid="input-location"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="windowStart">Start Date/Time</Label>
                     <Input
@@ -181,16 +181,17 @@ export default function Requests() {
                   />
                 </div>
               </div>
-              <DialogFooter>
+              <DialogFooter className="flex-col sm:flex-row gap-2">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setIsCreateDialogOpen(false)}
                   data-testid="button-cancel-request"
+                  className="w-full sm:w-auto"
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={createMutation.isPending} data-testid="button-submit-request">
+                <Button type="submit" disabled={createMutation.isPending} data-testid="button-submit-request" className="w-full sm:w-auto">
                   {createMutation.isPending ? "Creating..." : "Create Request"}
                 </Button>
               </DialogFooter>

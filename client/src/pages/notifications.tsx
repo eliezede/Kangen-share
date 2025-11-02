@@ -84,11 +84,11 @@ export default function Notifications() {
   const unreadCount = notifications?.filter(n => !n.readAt).length || 0;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-4 md:space-y-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Notifications</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">Notifications</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
             {unreadCount > 0 ? `${unreadCount} unread notification${unreadCount === 1 ? "" : "s"}` : "All caught up!"}
           </p>
         </div>
@@ -98,6 +98,7 @@ export default function Notifications() {
             onClick={() => markAllAsReadMutation.mutate()}
             disabled={markAllAsReadMutation.isPending}
             data-testid="button-mark-all-read"
+            className="w-full sm:w-auto"
           >
             <Check className="w-4 h-4 mr-2" />
             Mark All Read
