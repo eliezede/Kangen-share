@@ -60,6 +60,8 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
+  phone: varchar("phone"),
+  address: text("address"),
   role: userRoleEnum("role").notNull().default("user"),
   bio: text("bio"),
   city: varchar("city"),

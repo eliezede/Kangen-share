@@ -3,8 +3,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppHeader } from "@/components/app-header";
 import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/components/landing";
 import Home from "@/pages/home";
@@ -48,22 +47,15 @@ function Router({ isAuthenticated, isLoading }: RouterProps) {
 function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();
 
-  const style = {
-    "--sidebar-width": "16rem",
-    "--sidebar-width-icon": "3rem",
-  };
-
   return (
     <>
       {!isLoading && isAuthenticated ? (
-        <SidebarProvider style={style as React.CSSProperties}>
-          <div className="flex h-screen w-full">
-            <AppSidebar />
-            <main className="flex-1 overflow-auto">
-              <Router isAuthenticated={isAuthenticated} isLoading={isLoading} />
-            </main>
-          </div>
-        </SidebarProvider>
+        <div className="min-h-screen flex flex-col">
+          <AppHeader />
+          <main className="flex-1 overflow-auto">
+            <Router isAuthenticated={isAuthenticated} isLoading={isLoading} />
+          </main>
+        </div>
       ) : (
         <Router isAuthenticated={isAuthenticated} isLoading={isLoading} />
       )}

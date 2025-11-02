@@ -44,6 +44,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put('/api/users/me', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { firstName, lastName, phone, address, bio, city, email } = req.body;
+      const user = await storage.updateUser(userId, { 
+        firstName, 
+        lastName, 
+        phone, 
+        address, 
+        bio, 
+        city,
+        email 
+      });
+      res.json(user);
+    } catch (error: any) {
+      console.error("Error updating user:", error);
+      res.status(400).json({ message: error.message || "Failed to update user" });
+    }
+  });
+
   app.patch('/api/users/profile', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
@@ -180,6 +200,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         followerId: userId,
       });
       const follow = await storage.createFollow(validatedData);
+      
+      // Create notification for the followed user
+      await storage.createNotification({
+        userId: validatedData.followeeId,
+        type: "new_follower",
+        payload: { followerId: userId }
+      });
+      
       res.json(follow);
     } catch (error: any) {
       console.error("Error creating follow:", error);
@@ -220,6 +248,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post('/api/messages/thread', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { otherUserId } = req.body;
+      if (!otherUserId) {
+        return res.status(400).json({ message: "otherUserId is required" });
+      }
+      const thread = await storage.getOrCreateThread(userId, otherUserId);
+      res.json(thread);
+    } catch (error: any) {
+      console.error("Error creating thread:", error);
+      res.status(400).json({ message: error.message || "Failed to create thread" });
+    }
+  });
+
   app.post('/api/messages', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
@@ -228,6 +271,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         senderId: userId,
       });
       const message = await storage.createMessage(validatedData);
+      
+      // Get thread to find recipient
+      const thread = await storage.getMessageThread(validatedData.threadId);
+      if (thread) {
+        const recipientId = thread.userAId === userId ? thread.userBId : thread.userAId;
+        
+        // Create notification for the recipient
+        await storage.createNotification({
+          userId: recipientId,
+          type: "new_message",
+          payload: { senderId: userId, threadId: validatedData.threadId }
+        });
+      }
+      
       res.json(message);
     } catch (error: any) {
       console.error("Error creating message:", error);
