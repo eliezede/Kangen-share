@@ -6,29 +6,45 @@ Kangen Share is a community-driven web platform that enables users to request, o
 
 ## Recent Changes (November 2, 2025)
 
-### Landing Page Header (Latest)
-- **Responsive navigation header**: Clean, modern header for landing page
-  - Desktop: Logo left, visible navigation menu (How It Works, Features, Get Started), Login/Avatar right
+### Landing Page & Protected Routes (Latest)
+- **Complete landing page redesign**: Fully responsive for iPhone X and all devices
+  - Hero section: Responsive heights (85vh → 70vh → 60vh), responsive titles (text-3xl → text-6xl)
+  - How It Works: Grid cols-1 → sm:cols-2 → md:cols-3, contextual links (Browse Providers, View Requests, Open Messages)
+  - Features section: Grid cols-1 → sm:cols-2 → lg:cols-3, all cards clickable with wouter Link
+  - CTA section: Dynamic button text (Join Now / Go to Dashboard)
+  - All touch targets ≥44px, full mobile optimization
+
+- **Landing page header**: Clean, modern responsive header
+  - Desktop: Logo left, nav menu center (How It Works, Features, Get Started), Login/Avatar right
   - Mobile: Logo left, hamburger menu right, Login icon button
-  - Smooth scroll navigation to sections on the landing page
-  - Authentication-aware: Shows Login button when not authenticated, Avatar when logged in
-  - Sticky header with backdrop blur effect for modern appearance
-  - All touch targets meet 44px minimum accessibility requirement
+  - Smooth scroll navigation, sticky with backdrop blur
+  - Authentication-aware display
+
+- **ProtectedRoute component**: New authentication guard for SPA
+  - Protects all authenticated routes from unauthenticated access
+  - Shows loading spinner during auth check
+  - Shows "Redirecting to login..." message with 100ms delay before redirect
+  - Forwards all route props to child components (preserves :threadId, :userId, etc.)
+  - Prevents 404 errors for protected routes
+
+- **Router refactor**: Improved authentication flow
+  - Landing page shown only when not authenticated and loading complete
+  - All protected routes wrapped with ProtectedRoute component
+  - Props forwarded via `component={(params) => <ProtectedRoute component={X} {...params} />}`
+  - Dynamic routes (/messages/:threadId, /users/:userId) work correctly
+  - No content flash during auth loading
 
 ### Mobile Optimization
-- **Comprehensive mobile-first redesign**: Optimized for iPhone X and small screens (375px width)
-- **Touch target accessibility**: All interactive elements now meet 44px minimum requirement
+- **Touch target accessibility**: All interactive elements ≥44px minimum
   - Mobile menu items: 48px height
-  - Landing page CTAs (Get Started, Browse Providers, Join Now): 48px height
-  - Social login buttons: 44x44px squares
-  - Provider card buttons and icons: 44px minimum
-  - Dialog buttons: Full width on mobile with proper heights
-- **Responsive spacing**: Consistent p-4 md:p-6 pattern across all pages
-- **Responsive typography**: Headers scale from text-2xl to text-3xl/4xl on larger screens
-- **Mobile dialogs**: All dialogs scrollable with max-h-[90vh] for small screens
-- **Button groups**: Stack vertically on mobile (flex-col sm:flex-row)
-- **Grid layouts**: Single column on mobile, expanding on larger screens
-- **Icon sizing**: Increased from 16px to 20px for better mobile visibility
+  - Landing page CTAs: min-h-12 (48px)
+  - All buttons and icons: 44px minimum
+- **Responsive patterns**:
+  - Spacing: p-4 sm:p-6 md:p-8
+  - Typography: text-2xl → text-3xl → text-4xl → text-5xl → text-6xl
+  - Buttons: w-full on mobile, w-auto on desktop
+  - Button groups: flex-col sm:flex-row
+  - Grid layouts: grid-cols-1 → sm:grid-cols-2 → md/lg:grid-cols-3
 
 ### Previous Changes
 - **All users are providers**: Removed role-based provider designation; all users can receive water requests

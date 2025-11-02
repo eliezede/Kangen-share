@@ -25,11 +25,11 @@ interface RouterProps {
 function Router({ isAuthenticated, isLoading }: RouterProps) {
   return (
     <Switch>
-      {/* Landing page - always accessible */}
-      {!isAuthenticated && !isLoading ? (
-        <Route path="/" component={Landing} />
-      ) : (
+      {/* Landing page for unauthenticated users, Home for authenticated */}
+      {isAuthenticated ? (
         <Route path="/" component={(params) => <ProtectedRoute component={Home} {...params} />} />
+      ) : (
+        <Route path="/" component={Landing} />
       )}
       
       {/* Protected routes - require authentication */}
@@ -53,18 +53,25 @@ function Router({ isAuthenticated, isLoading }: RouterProps) {
 function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();
 
-  return (
-    <>
-      {!isLoading && isAuthenticated ? (
+  // Always render router; show AppHeader only when authenticated
+  if (isAuthenticated) {
+    return (
+      <>
         <div className="min-h-screen flex flex-col">
           <AppHeader />
           <main className="flex-1 overflow-auto">
             <Router isAuthenticated={isAuthenticated} isLoading={isLoading} />
           </main>
         </div>
-      ) : (
-        <Router isAuthenticated={isAuthenticated} isLoading={isLoading} />
-      )}
+        <Toaster />
+      </>
+    );
+  }
+
+  // Unauthenticated or loading - show router without header
+  return (
+    <>
+      <Router isAuthenticated={isAuthenticated} isLoading={isLoading} />
       <Toaster />
     </>
   );
