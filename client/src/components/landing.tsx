@@ -47,46 +47,46 @@ export default function Landing() {
           <div className="mt-8 flex flex-col items-center gap-3">
             <p className="text-sm text-white/70">Sign in with:</p>
             <div className="flex items-center gap-4" role="list" aria-label="Available login methods">
-              <div 
-                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center" 
+              <button 
+                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110 cursor-pointer" 
                 data-testid="icon-login-google"
-                role="listitem"
-                aria-label="Google login"
+                aria-label="Sign in with Google"
+                onClick={() => window.location.href = "/api/login"}
               >
                 <SiGoogle className="w-5 h-5 text-white" aria-hidden="true" />
-              </div>
-              <div 
-                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center" 
+              </button>
+              <button 
+                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110 cursor-pointer" 
                 data-testid="icon-login-github"
-                role="listitem"
-                aria-label="GitHub login"
+                aria-label="Sign in with GitHub"
+                onClick={() => window.location.href = "/api/login"}
               >
                 <SiGithub className="w-5 h-5 text-white" aria-hidden="true" />
-              </div>
-              <div 
-                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center" 
+              </button>
+              <button 
+                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110 cursor-pointer" 
                 data-testid="icon-login-x"
-                role="listitem"
-                aria-label="X (Twitter) login"
+                aria-label="Sign in with X (Twitter)"
+                onClick={() => window.location.href = "/api/login"}
               >
                 <SiX className="w-5 h-5 text-white" aria-hidden="true" />
-              </div>
-              <div 
-                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center" 
+              </button>
+              <button 
+                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110 cursor-pointer" 
                 data-testid="icon-login-apple"
-                role="listitem"
-                aria-label="Apple login"
+                aria-label="Sign in with Apple"
+                onClick={() => window.location.href = "/api/login"}
               >
                 <SiApple className="w-5 h-5 text-white" aria-hidden="true" />
-              </div>
-              <div 
-                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center" 
+              </button>
+              <button 
+                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110 cursor-pointer" 
                 data-testid="icon-login-email"
-                role="listitem"
-                aria-label="Email and password login"
+                aria-label="Sign in with Email and Password"
+                onClick={() => window.location.href = "/api/login"}
               >
                 <Mail className="w-5 h-5 text-white" aria-hidden="true" />
-              </div>
+              </button>
             </div>
           </div>
         </div>
