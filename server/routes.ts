@@ -10,6 +10,8 @@ import {
   insertFollowSchema,
   insertMessageSchema,
   updateUserProfileSchema,
+  insertAvailabilityRuleSchema,
+  insertAvailabilityExceptionSchema,
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -346,6 +348,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting review:", error);
       res.status(500).json({ message: "Failed to delete review" });
+    }
+  });
+
+  // Availability routes
+  app.get('/api/availability/rules', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const rules = await storage.getAvailabilityRules(userId);
+      res.json(rules);
+    } catch (error) {
+      console.error("Error fetching availability rules:", error);
+      res.status(500).json({ message: "Failed to fetch availability rules" });
+    }
+  });
+
+  app.post('/api/availability/rules', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const validatedData = insertAvailabilityRuleSchema.parse({
+        ...req.body,
+        userId,
+      });
+      const rule = await storage.createAvailabilityRule(validatedData);
+      res.json(rule);
+    } catch (error: any) {
+      console.error("Error creating availability rule:", error);
+      res.status(400).json({ message: error.message || "Failed to create availability rule" });
+    }
+  });
+
+  app.delete('/api/availability/rules/:ruleId', isAuthenticated, async (req, res) => {
+    try {
+      await storage.deleteAvailabilityRule(req.params.ruleId);
+      res.json({ message: "Availability rule deleted" });
+    } catch (error) {
+      console.error("Error deleting availability rule:", error);
+      res.status(500).json({ message: "Failed to delete availability rule" });
+    }
+  });
+
+  app.get('/api/availability/exceptions', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const exceptions = await storage.getAvailabilityExceptions(userId);
+      res.json(exceptions);
+    } catch (error) {
+      console.error("Error fetching availability exceptions:", error);
+      res.status(500).json({ message: "Failed to fetch availability exceptions" });
+    }
+  });
+
+  app.post('/api/availability/exceptions', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const validatedData = insertAvailabilityExceptionSchema.parse({
+        ...req.body,
+        userId,
+      });
+      const exception = await storage.createAvailabilityException(validatedData);
+      res.json(exception);
+    } catch (error: any) {
+      console.error("Error creating availability exception:", error);
+      res.status(400).json({ message: error.message || "Failed to create availability exception" });
+    }
+  });
+
+  app.delete('/api/availability/exceptions/:exceptionId', isAuthenticated, async (req, res) => {
+    try {
+      await storage.deleteAvailabilityException(req.params.exceptionId);
+      res.json({ message: "Availability exception deleted" });
+    } catch (error) {
+      console.error("Error deleting availability exception:", error);
+      res.status(500).json({ message: "Failed to delete availability exception" });
     }
   });
 

@@ -226,6 +226,9 @@ export const availabilityRules = pgTable("availability_rules", {
   timezone: varchar("timezone").notNull(),
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date"),
+  startTime: varchar("start_time").notNull(),
+  endTime: varchar("end_time").notNull(),
+  description: text("description"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

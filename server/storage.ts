@@ -34,7 +34,7 @@ export interface IStorage {
   // User operations
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
-  updateUserProfile(id: string, data: { role?: string; bio?: string; city?: string }): Promise<User | undefined>;
+  updateUserProfile(id: string, data: { role?: "user" | "provider" | "admin"; bio?: string; city?: string }): Promise<User | undefined>;
   getAllUsers(): Promise<User[]>;
   toggleUserStatus(id: string, isActive: boolean): Promise<void>;
   
@@ -67,6 +67,14 @@ export interface IStorage {
   createNotification(notification: InsertNotification): Promise<Notification>;
   markNotificationAsRead(id: string): Promise<void>;
   markAllNotificationsAsRead(userId: string): Promise<void>;
+
+  // Availability operations
+  getAvailabilityRules(userId: string): Promise<AvailabilityRule[]>;
+  createAvailabilityRule(rule: InsertAvailabilityRule): Promise<AvailabilityRule>;
+  deleteAvailabilityRule(id: string): Promise<void>;
+  getAvailabilityExceptions(userId: string): Promise<AvailabilityException[]>;
+  createAvailabilityException(exception: InsertAvailabilityException): Promise<AvailabilityException>;
+  deleteAvailabilityException(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -91,7 +99,7 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async updateUserProfile(id: string, data: { role?: string; bio?: string; city?: string }): Promise<User | undefined> {
+  async updateUserProfile(id: string, data: { role?: "user" | "provider" | "admin"; bio?: string; city?: string }): Promise<User | undefined> {
     const [user] = await db
       .update(users)
       .set({ ...data, updatedAt: new Date() })
@@ -308,6 +316,41 @@ export class DatabaseStorage implements IStorage {
       .update(notifications)
       .set({ readAt: new Date() })
       .where(and(eq(notifications.userId, userId), sql`${notifications.readAt} IS NULL`));
+  }
+
+  // Availability operations
+  async getAvailabilityRules(userId: string): Promise<AvailabilityRule[]> {
+    return db
+      .select()
+      .from(availabilityRules)
+      .where(eq(availabilityRules.userId, userId))
+      .orderBy(availabilityRules.createdAt);
+  }
+
+  async createAvailabilityRule(rule: InsertAvailabilityRule): Promise<AvailabilityRule> {
+    const [newRule] = await db.insert(availabilityRules).values(rule).returning();
+    return newRule;
+  }
+
+  async deleteAvailabilityRule(id: string): Promise<void> {
+    await db.delete(availabilityRules).where(eq(availabilityRules.id, id));
+  }
+
+  async getAvailabilityExceptions(userId: string): Promise<AvailabilityException[]> {
+    return db
+      .select()
+      .from(availabilityExceptions)
+      .where(eq(availabilityExceptions.userId, userId))
+      .orderBy(availabilityExceptions.date);
+  }
+
+  async createAvailabilityException(exception: InsertAvailabilityException): Promise<AvailabilityException> {
+    const [newException] = await db.insert(availabilityExceptions).values(exception).returning();
+    return newException;
+  }
+
+  async deleteAvailabilityException(id: string): Promise<void> {
+    await db.delete(availabilityExceptions).where(eq(availabilityExceptions.id, id));
   }
 }
 
