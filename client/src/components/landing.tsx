@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Droplet, Users, Calendar, Star, MessageCircle, Shield } from "lucide-react";
+import { Droplet, Users, Calendar, Star, MessageCircle, Shield, Mail } from "lucide-react";
+import { SiGoogle, SiGithub, SiX, SiApple } from "react-icons/si";
 import heroImage from "@assets/generated_images/Community_water_sharing_hero_image_3fe39fc1.png";
 
 export default function Landing() {
@@ -40,6 +41,53 @@ export default function Landing() {
             >
               Browse Providers
             </Button>
+          </div>
+          
+          {/* Login Methods */}
+          <div className="mt-8 flex flex-col items-center gap-3">
+            <p className="text-sm text-white/70">Sign in with:</p>
+            <div className="flex items-center gap-4" role="list" aria-label="Available login methods">
+              <div 
+                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center" 
+                data-testid="icon-login-google"
+                role="listitem"
+                aria-label="Google login"
+              >
+                <SiGoogle className="w-5 h-5 text-white" aria-hidden="true" />
+              </div>
+              <div 
+                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center" 
+                data-testid="icon-login-github"
+                role="listitem"
+                aria-label="GitHub login"
+              >
+                <SiGithub className="w-5 h-5 text-white" aria-hidden="true" />
+              </div>
+              <div 
+                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center" 
+                data-testid="icon-login-x"
+                role="listitem"
+                aria-label="X (Twitter) login"
+              >
+                <SiX className="w-5 h-5 text-white" aria-hidden="true" />
+              </div>
+              <div 
+                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center" 
+                data-testid="icon-login-apple"
+                role="listitem"
+                aria-label="Apple login"
+              >
+                <SiApple className="w-5 h-5 text-white" aria-hidden="true" />
+              </div>
+              <div 
+                className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center" 
+                data-testid="icon-login-email"
+                role="listitem"
+                aria-label="Email and password login"
+              >
+                <Mail className="w-5 h-5 text-white" aria-hidden="true" />
+              </div>
+            </div>
           </div>
         </div>
       </div>

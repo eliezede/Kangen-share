@@ -80,6 +80,8 @@ Preferred communication style: Simple, everyday language.
 - Replit Auth with OpenID Connect (OIDC)
 - Passport.js strategy for OIDC integration
 - Session-based authentication with secure HTTP-only cookies
+- Multiple login methods supported: Google, GitHub, X (Twitter), Apple, Email/Password
+- Landing page displays visual icons for all available login methods
 
 **Authorization Model:**
 - Three-tier role system: user, provider, admin
