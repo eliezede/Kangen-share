@@ -34,9 +34,9 @@ function Router({ isAuthenticated, isLoading }: RouterProps) {
           <Route path="/messages/:threadId" component={Messages} />
           <Route path="/messages" component={Messages} />
           <Route path="/availability" component={Availability} />
-          <Route path="/profile" component={Profile} />
-          <Route path="/profile/:userId" component={Profile} />
           <Route path="/users/:userId" component={Profile} />
+          <Route path="/profile/:userId" component={Profile} />
+          <Route path="/profile" component={Profile} />
           <Route path="/notifications" component={Notifications} />
           <Route path="/admin" component={Admin} />
         </>

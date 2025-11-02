@@ -125,7 +125,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const currentUserId = (req as any).user?.claims?.sub;
       const allUsers = await storage.getAllUsers();
-      const providers = allUsers.filter(u => u.role === "provider" && u.isActive);
+      const providers = allUsers.filter(u => u.isActive);
       
       // Add isFollowing status
       if (currentUserId) {
@@ -149,7 +149,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const allUsers = await storage.getAllUsers();
       const providers = allUsers
-        .filter(u => u.role === "provider" && u.isActive)
+        .filter(u => u.isActive)
         .sort((a, b) => (b.rating || 0) - (a.rating || 0))
         .slice(0, 6);
       res.json(providers);
@@ -198,13 +198,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.createNotification({
         userId: validatedData.followeeId,
         type: "new_follower",
-        payload: { followerId: userId }
+        payloadJson: { followerId: userId }
       });
       
       res.json(follow);
     } catch (error: any) {
       console.error("Error creating follow:", error);
       res.status(400).json({ message: error.message || "Failed to follow user" });
+    }
+  });
+
+  app.get('/api/follows/check/:userId', isAuthenticated, async (req: any, res) => {
+    try {
+      const currentUserId = req.user.claims.sub;
+      const targetUserId = req.params.userId;
+      const isFollowing = await storage.isFollowing(currentUserId, targetUserId);
+      res.json({ isFollowing });
+    } catch (error) {
+      console.error("Error checking follow status:", error);
+      res.status(500).json({ message: "Failed to check follow status" });
     }
   });
 
@@ -274,7 +286,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.createNotification({
           userId: recipientId,
           type: "new_message",
-          payload: { senderId: userId, threadId: validatedData.threadId }
+          payloadJson: { senderId: userId, threadId: validatedData.threadId }
         });
       }
       
@@ -324,7 +336,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const allUsers = await storage.getAllUsers();
       res.json({
         totalRequests: 0,
-        activeProviders: allUsers.filter(u => u.role === "provider" && u.isActive).length,
+        activeProviders: allUsers.filter(u => u.isActive).length,
         completedRequests: 0,
       });
     } catch (error) {

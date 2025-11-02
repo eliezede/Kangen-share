@@ -321,7 +321,6 @@ export const insertRequestSchema = createInsertSchema(requests).omit({
   createdAt: true,
   updatedAt: true,
   status: true,
-  providerId: true,
 }).extend({
   windowStart: z.union([z.date(), z.string().transform((val) => new Date(val))]),
   windowEnd: z.union([z.date(), z.string().transform((val) => new Date(val))]),

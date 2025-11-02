@@ -2,7 +2,16 @@
 
 ## Overview
 
-Kangen Share is a community-driven web platform that enables users to request, offer, and share Kangen water. The application facilitates connections between water requesters and providers through features like request management, social following, real-time messaging, availability scheduling, and reviews. Built with a modern full-stack architecture, it emphasizes trust, community warmth, and clarity in user interactions.
+Kangen Share is a community-driven web platform that enables users to request, offer, and share Kangen water. All users are providers by default and can freeze their availability to stop receiving requests. The application facilitates connections through features like request management, social following with follow/unfollow buttons on user profiles, real-time messaging, availability scheduling, and reviews. Built with a modern full-stack architecture, it emphasizes trust, community warmth, and clarity in user interactions.
+
+## Recent Changes (November 2, 2025)
+
+- **All users are providers**: Removed role-based provider designation; all users can receive water requests
+- **Follow system**: Added follow/unfollow buttons to user profile pages with real-time status updates
+- **Request Water form fixed**: Corrected field names to match schema (qtyLiters, locationText, windowStart, windowEnd)
+- **Messages page enhancement**: Now supports direct navigation via /messages/:threadId URL parameter
+- **User profile routes**: Added /users/:userId route for consistency alongside /profile/:userId
+- **Notification payload fix**: Changed notification storage from 'payload' to 'payloadJson' field
 
 ## User Preferences
 

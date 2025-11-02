@@ -54,6 +54,11 @@ export default function Profile() {
     enabled: !!profileUserId,
   });
 
+  const { data: isFollowing } = useQuery<{ isFollowing: boolean }>({
+    queryKey: [`/api/follows/check/${profileUserId}`],
+    enabled: !!profileUserId && !isOwnProfile,
+  });
+
   const [, navigate] = useLocation();
   const [requestDialogOpen, setRequestDialogOpen] = useState(false);
 
@@ -130,14 +135,57 @@ export default function Profile() {
     },
   });
 
+  const followMutation = useMutation({
+    mutationFn: async (followeeId: string) => {
+      await apiRequest("POST", "/api/follows", { followeeId });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/follows/check/${profileUserId}`] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users", profileUserId] });
+      toast({
+        title: "Following",
+        description: "You are now following this user",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const unfollowMutation = useMutation({
+    mutationFn: async (followeeId: string) => {
+      await apiRequest("DELETE", `/api/follows/${followeeId}`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/follows/check/${profileUserId}`] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users", profileUserId] });
+      toast({
+        title: "Unfollowed",
+        description: "You have unfollowed this user",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleRequestSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     createRequestMutation.mutate({
       providerId: profileUserId,
-      quantity: Number(formData.get("quantity")),
-      pickupTimeStart: new Date(formData.get("pickupTimeStart") as string).toISOString(),
-      pickupTimeEnd: new Date(formData.get("pickupTimeEnd") as string).toISOString(),
+      qtyLiters: Number(formData.get("qtyLiters")),
+      locationText: formData.get("locationText") as string,
+      windowStart: new Date(formData.get("windowStart") as string).toISOString(),
+      windowEnd: new Date(formData.get("windowEnd") as string).toISOString(),
       notes: formData.get("notes") as string || undefined,
     });
   };
@@ -226,6 +274,29 @@ export default function Profile() {
                 </div>
                 {!isOwnProfile && (
                   <div className="flex gap-2">
+                    {isFollowing?.isFollowing ? (
+                      <Button 
+                        variant="secondary" 
+                        size="sm"
+                        onClick={() => unfollowMutation.mutate(profileUser.id)}
+                        disabled={unfollowMutation.isPending}
+                        data-testid="button-unfollow-user"
+                      >
+                        <UserCheck className="w-4 h-4 mr-2" />
+                        {unfollowMutation.isPending ? "Unfollowing..." : "Following"}
+                      </Button>
+                    ) : (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => followMutation.mutate(profileUser.id)}
+                        disabled={followMutation.isPending}
+                        data-testid="button-follow-user"
+                      >
+                        <UserPlus className="w-4 h-4 mr-2" />
+                        {followMutation.isPending ? "Following..." : "Follow"}
+                      </Button>
+                    )}
                     <Button 
                       variant="outline" 
                       size="sm"
@@ -236,14 +307,13 @@ export default function Profile() {
                       <MessageCircle className="w-4 h-4 mr-2" />
                       {messageMutation.isPending ? "Loading..." : "Message"}
                     </Button>
-                    {profileUser.role === "provider" && (
-                      <Dialog open={requestDialogOpen} onOpenChange={setRequestDialogOpen}>
-                        <DialogTrigger asChild>
-                          <Button variant="default" size="sm" data-testid="button-request-water">
-                            <Droplet className="w-4 h-4 mr-2" />
-                            Request Water
-                          </Button>
-                        </DialogTrigger>
+                    <Dialog open={requestDialogOpen} onOpenChange={setRequestDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="default" size="sm" data-testid="button-request-water">
+                          <Droplet className="w-4 h-4 mr-2" />
+                          Request Water
+                        </Button>
+                      </DialogTrigger>
                         <DialogContent>
                           <DialogHeader>
                             <DialogTitle>Request Water from {profileUser.firstName}</DialogTitle>
@@ -251,10 +321,10 @@ export default function Profile() {
                           </DialogHeader>
                           <form onSubmit={handleRequestSubmit} className="space-y-4">
                             <div className="space-y-2">
-                              <Label htmlFor="quantity">Quantity (liters)</Label>
+                              <Label htmlFor="qtyLiters">Quantity (liters)</Label>
                               <Input
-                                id="quantity"
-                                name="quantity"
+                                id="qtyLiters"
+                                name="qtyLiters"
                                 type="number"
                                 min="1"
                                 required
@@ -263,20 +333,31 @@ export default function Profile() {
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor="pickupTimeStart">Pickup Time Start</Label>
+                              <Label htmlFor="locationText">Pickup Location</Label>
                               <Input
-                                id="pickupTimeStart"
-                                name="pickupTimeStart"
+                                id="locationText"
+                                name="locationText"
+                                type="text"
+                                required
+                                placeholder="123 Main St, City"
+                                data-testid="input-request-location"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="windowStart">Pickup Time Start</Label>
+                              <Input
+                                id="windowStart"
+                                name="windowStart"
                                 type="datetime-local"
                                 required
                                 data-testid="input-request-start"
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor="pickupTimeEnd">Pickup Time End</Label>
+                              <Label htmlFor="windowEnd">Pickup Time End</Label>
                               <Input
-                                id="pickupTimeEnd"
-                                name="pickupTimeEnd"
+                                id="windowEnd"
+                                name="windowEnd"
                                 type="datetime-local"
                                 required
                                 data-testid="input-request-end"
@@ -311,7 +392,6 @@ export default function Profile() {
                           </form>
                         </DialogContent>
                       </Dialog>
-                    )}
                   </div>
                 )}
               </div>
