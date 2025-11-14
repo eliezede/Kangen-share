@@ -1,89 +1,39 @@
-import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { AppHeader } from "@/components/app-header";
-import { ProtectedRoute } from "@/components/protected-route";
-import { useAuth } from "@/hooks/useAuth";
-import Landing from "@/components/landing";
-import Home from "@/pages/home";
-import Requests from "@/pages/requests";
-import Providers from "@/pages/providers";
-import Messages from "@/pages/messages";
-import Availability from "@/pages/availability";
-import Profile from "@/pages/profile";
-import Notifications from "@/pages/notifications";
-import Admin from "@/pages/admin";
-import NotFound from "@/pages/not-found";
-
-interface RouterProps {
-  isAuthenticated: boolean;
-  isLoading: boolean;
-}
-
-function Router({ isAuthenticated, isLoading }: RouterProps) {
-  return (
-    <Switch>
-      {/* Landing page for unauthenticated users, Home for authenticated */}
-      {isAuthenticated ? (
-        <Route path="/" component={(params) => <ProtectedRoute component={Home} {...params} />} />
-      ) : (
-        <Route path="/" component={Landing} />
-      )}
-      
-      {/* Protected routes - require authentication */}
-      <Route path="/requests" component={(params) => <ProtectedRoute component={Requests} {...params} />} />
-      <Route path="/providers" component={(params) => <ProtectedRoute component={Providers} {...params} />} />
-      <Route path="/messages/:threadId" component={(params) => <ProtectedRoute component={Messages} {...params} />} />
-      <Route path="/messages" component={(params) => <ProtectedRoute component={Messages} {...params} />} />
-      <Route path="/availability" component={(params) => <ProtectedRoute component={Availability} {...params} />} />
-      <Route path="/users/:userId" component={(params) => <ProtectedRoute component={Profile} {...params} />} />
-      <Route path="/profile/:userId" component={(params) => <ProtectedRoute component={Profile} {...params} />} />
-      <Route path="/profile" component={(params) => <ProtectedRoute component={Profile} {...params} />} />
-      <Route path="/notifications" component={(params) => <ProtectedRoute component={Notifications} {...params} />} />
-      <Route path="/admin" component={(params) => <ProtectedRoute component={Admin} {...params} />} />
-      
-      {/* 404 fallback */}
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
-
-function AppContent() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  // Always render router; show AppHeader only when authenticated
-  if (isAuthenticated) {
-    return (
-      <>
-        <div className="min-h-screen flex flex-col">
-          <AppHeader />
-          <main className="flex-1 overflow-auto">
-            <Router isAuthenticated={isAuthenticated} isLoading={isLoading} />
-          </main>
-        </div>
-        <Toaster />
-      </>
-    );
-  }
-
-  // Unauthenticated or loading - show router without header
-  return (
-    <>
-      <Router isAuthenticated={isAuthenticated} isLoading={isLoading} />
-      <Toaster />
-    </>
-  );
-}
+import { Route, Switch, useLocation } from "wouter";
+import LoginPage from "./pages/login";
+import HomePage from "./pages/home";
+import HostProfilePage from "./pages/host-profile";
+import RequestWaterPage from "./pages/request-water";
+import ChatPage from "./pages/chat";
+import RateHostPage from "./pages/rate-host";
+import { TopNav } from "./components/top-nav";
 
 function App() {
+  const [location] = useLocation();
+  const showNavigation = location !== "/";
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <AppContent />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      {showNavigation && <TopNav />}
+      <Switch>
+        <Route path="/" component={LoginPage} />
+        <Route path="/home" component={HomePage} />
+        <Route path="/host" component={HostProfilePage} />
+        <Route path="/request" component={RequestWaterPage} />
+        <Route path="/chat" component={ChatPage} />
+        <Route path="/rate" component={RateHostPage} />
+        <Route>
+          <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-100 via-white to-slate-200 px-6 text-center">
+            <h1 className="text-4xl font-semibold tracking-tight text-slate-900">Page not found</h1>
+            <p className="mt-3 max-w-sm text-sm text-slate-500">
+              The page you’re looking for doesn’t exist. Head back to the map to discover generous Kangen hosts.
+            </p>
+            <a href="/home" className="mt-6 rounded-full bg-slate-900 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800">
+              Return home
+            </a>
+          </div>
+        </Route>
+      </Switch>
+    </div>
   );
 }
 

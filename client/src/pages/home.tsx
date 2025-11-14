@@ -1,262 +1,167 @@
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useAuth } from "@/hooks/useAuth";
-import { Link } from "wouter";
-import { Droplet, Users, Star, TrendingUp, Clock } from "lucide-react";
-import type { Request, User } from "@shared/schema";
+import { useState } from "react";
 
-export default function Home() {
-  const { user } = useAuth();
+const featuredHosts = [
+  {
+    name: "Maya Chen",
+    city: "San Francisco, CA",
+    rating: 4.9,
+    ph: "8.5 - 9.5",
+    availability: "Weekdays 7am - 9pm",
+    maintenance: "Filter changed 2 weeks ago",
+  },
+  {
+    name: "Jordan Blake",
+    city: "Austin, TX",
+    rating: 4.8,
+    ph: "9.0",
+    availability: "Daily 6am - 8pm",
+    maintenance: "Full system flush last month",
+  },
+  {
+    name: "Sofia Martinez",
+    city: "New York, NY",
+    rating: 5.0,
+    ph: "8.5 - 9.5",
+    availability: "Weekends",
+    maintenance: "Electrodes inspected this week",
+  },
+];
 
-  const { data: requests, isLoading: requestsLoading } = useQuery<Request[]>({
-    queryKey: ["/api/requests/recent"],
-  });
+const mapPins = [
+  { top: "20%", left: "30%", label: "Maya" },
+  { top: "60%", left: "45%", label: "Jordan" },
+  { top: "35%", left: "72%", label: "Sofia" },
+  { top: "48%", left: "18%", label: "Ava" },
+  { top: "72%", left: "64%", label: "Noah" },
+];
 
-  const { data: providers, isLoading: providersLoading } = useQuery<User[]>({
-    queryKey: ["/api/providers/featured"],
-  });
+export default function HomePage() {
+  const [search, setSearch] = useState("");
 
-  const { data: stats } = useQuery<{
-    totalRequests: number;
-    activeProviders: number;
-    completedRequests: number;
-  }>({
-    queryKey: ["/api/stats/dashboard"],
-  });
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending": return "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20";
-      case "accepted": return "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20";
-      case "completed": return "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20";
-      case "rejected": return "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20";
-      case "cancelled": return "bg-gray-500/10 text-gray-700 dark:text-gray-400 border-gray-500/20";
-      default: return "";
-    }
-  };
-
-  const getInitials = (firstName?: string | null, lastName?: string | null) => {
-    if (!firstName && !lastName) return "U";
-    return `${firstName?.[0] || ""}${lastName?.[0] || ""}`.toUpperCase();
-  };
+  const filteredHosts = featuredHosts.filter((host) =>
+    `${host.name} ${host.city}`.toLowerCase().includes(search.toLowerCase()),
+  );
 
   return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6 md:space-y-8">
-      {/* Welcome Header */}
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold mb-2" data-testid="text-welcome">
-          Welcome back, {user?.firstName || "there"}!
-        </h1>
-        <p className="text-sm md:text-base text-muted-foreground">
-          {user?.role === "provider" 
-            ? "Manage your availability and respond to water requests from your community"
-            : "Request water from trusted providers in your area"}
-        </p>
-      </div>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Requests</CardTitle>
-            <Droplet className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold" data-testid="text-total-requests">
-              {stats?.totalRequests || 0}
+    <div className="min-h-screen bg-slate-50">
+      <div className="relative overflow-hidden bg-white">
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#f8fafc,_rgba(248,250,252,0))]" />
+        <div className="mx-auto flex max-w-6xl flex-col gap-12 px-6 pb-16 pt-24 lg:flex-row lg:items-center">
+          <div className="w-full lg:w-2/5">
+            <p className="text-sm font-semibold uppercase tracking-[0.35em] text-slate-500">
+              Kangen Share
+            </p>
+            <h1 className="mt-6 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
+              Find alkaline water wherever you land.
+            </h1>
+            <p className="mt-4 text-base text-slate-600">
+              Browse trusted Kangen K8 hosts, connect instantly, and pick up perfectly balanced water that keeps your wellness routine uninterrupted on the road.
+            </p>
+            <div className="mt-8 flex gap-4">
+              <button className="rounded-full bg-slate-900 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800">
+                Become a host
+              </button>
+              <button className="rounded-full border border-slate-200 px-6 py-3 text-sm font-medium text-slate-900 transition hover:border-slate-300 hover:bg-slate-100">
+                Learn more
+              </button>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">All time</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Providers</CardTitle>
-            <Users className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold" data-testid="text-active-providers">
-              {stats?.activeProviders || 0}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">In your area</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completed</CardTitle>
-            <TrendingUp className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold" data-testid="text-completed-requests">
-              {stats?.completedRequests || 0}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">This month</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>Common tasks to get started</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col sm:flex-row flex-wrap gap-3">
-          <Button asChild data-testid="button-request-water" className="w-full sm:w-auto">
-            <Link href="/requests/new">
-              <Droplet className="w-4 h-4 mr-2" />
-              Request Water
-            </Link>
-          </Button>
-          <Button variant="secondary" asChild data-testid="button-find-providers" className="w-full sm:w-auto">
-            <Link href="/providers">
-              <Users className="w-4 h-4 mr-2" />
-              Find Providers
-            </Link>
-          </Button>
-          {user?.role === "provider" && (
-            <Button variant="secondary" asChild data-testid="button-manage-availability" className="w-full sm:w-auto">
-              <Link href="/availability">
-                <Clock className="w-4 h-4 mr-2" />
-                Manage Availability
-              </Link>
-            </Button>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Recent Requests */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Recent Requests</CardTitle>
-              <CardDescription>Latest water sharing activity</CardDescription>
-            </div>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/requests">View All</Link>
-            </Button>
           </div>
-        </CardHeader>
-        <CardContent>
-          {requestsLoading ? (
-            <div className="space-y-4">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="flex items-start gap-4">
-                  <Skeleton className="w-12 h-12 rounded-full" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-4 w-1/3" />
-                    <Skeleton className="h-3 w-2/3" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : requests && requests.length > 0 ? (
-            <div className="space-y-4">
-              {requests.slice(0, 5).map((request) => (
-                <div 
-                  key={request.id} 
-                  className="flex items-start gap-4 p-4 rounded-md border hover-elevate"
-                  data-testid={`request-card-${request.id}`}
-                >
-                  <Droplet className="w-5 h-5 text-primary mt-0.5" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <p className="font-medium">{request.qtyLiters}L Water Request</p>
-                      <Badge variant="outline" className={getStatusColor(request.status)}>
-                        {request.status}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-2">{request.locationText}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(request.windowStart).toLocaleDateString()} - {new Date(request.windowEnd).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <Droplet className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
-              <p className="text-muted-foreground">No requests yet</p>
-              <Button variant="ghost" asChild className="mt-2">
-                <Link href="/requests/new">Create your first request</Link>
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
 
-      {/* Featured Providers */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Featured Providers</CardTitle>
-              <CardDescription>Top-rated providers in your community</CardDescription>
+          <div className="w-full rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl shadow-slate-200/70 backdrop-blur lg:w-3/5">
+            <div className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-5 py-3 shadow-sm focus-within:border-slate-400">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                className="h-5 w-5 text-slate-400"
+              >
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-3.5-3.5" />
+              </svg>
+              <input
+                type="search"
+                placeholder="Search by city, host, or pH preference"
+                className="w-full border-none bg-transparent text-base text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+              />
             </div>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/providers">View All</Link>
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {providersLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[...Array(3)].map((_, i) => (
-                <Card key={i}>
-                  <CardContent className="pt-6">
-                    <div className="flex flex-col items-center text-center space-y-3">
-                      <Skeleton className="w-20 h-20 rounded-full" />
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-3 w-24" />
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : providers && providers.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {providers.slice(0, 6).map((provider) => (
-                <Card key={provider.id} className="hover-elevate" data-testid={`provider-card-${provider.id}`}>
-                  <CardContent className="pt-6">
-                    <div className="flex flex-col items-center text-center">
-                      <Avatar className="w-20 h-20 mb-4">
-                        <AvatarImage src={provider.profileImageUrl || undefined} alt={provider.firstName || "Provider"} />
-                        <AvatarFallback>{getInitials(provider.firstName, provider.lastName)}</AvatarFallback>
-                      </Avatar>
-                      <h3 className="font-semibold mb-1">
-                        {provider.firstName} {provider.lastName}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mb-2">{provider.city || "Location not set"}</p>
-                      <div className="flex items-center gap-1 text-sm">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        <span className="font-medium">{provider.rating?.toFixed(1) || "New"}</span>
-                        {provider.reviewCount > 0 && (
-                          <span className="text-muted-foreground">({provider.reviewCount})</span>
-                        )}
+
+            <div className="mt-8 grid gap-6 lg:grid-cols-2">
+              <div className="relative h-72 overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 p-6 text-white">
+                <div className="absolute inset-0 opacity-70" style={{ backgroundImage: "url('https://maps.gstatic.com/tactile/pane/default_geography.png')", backgroundSize: "cover" }} />
+                <div className="relative h-full w-full rounded-2xl bg-white/5 backdrop-blur">
+                  {mapPins.map((pin) => (
+                    <div
+                      key={pin.label}
+                      className="absolute -translate-x-1/2 -translate-y-1/2 text-center"
+                      style={{ top: pin.top, left: pin.left }}
+                    >
+                      <div className="mx-auto h-3 w-3 rounded-full bg-white" />
+                      <div className="mt-2 rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-slate-900 shadow-lg shadow-slate-900/10">
+                        {pin.label}
                       </div>
-                      <Button variant="secondary" size="sm" className="mt-4 w-full" asChild>
-                        <Link href={`/profile/${provider.id}`}>View Profile</Link>
-                      </Button>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+                  ))}
+                </div>
+                <div className="absolute left-6 top-6 rounded-full bg-white/15 px-3 py-1 text-xs font-medium uppercase tracking-wide">
+                  Live hosts near you
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {filteredHosts.map((host) => (
+                  <article
+                    key={host.name}
+                    className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/70 transition hover:-translate-y-1 hover:shadow-lg"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900">{host.name}</h3>
+                        <p className="text-sm text-slate-500">{host.city}</p>
+                      </div>
+                      <div className="flex items-center gap-1 text-sm font-medium text-slate-900">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 text-amber-400">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.802 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.802-2.034a1 1 0 00-1.175 0l-2.802 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        {host.rating}
+                      </div>
+                    </div>
+                    <dl className="mt-4 grid grid-cols-2 gap-4 text-sm text-slate-600">
+                      <div>
+                        <dt className="font-medium text-slate-500">pH available</dt>
+                        <dd className="text-slate-900">{host.ph}</dd>
+                      </div>
+                      <div>
+                        <dt className="font-medium text-slate-500">Availability</dt>
+                        <dd className="text-slate-900">{host.availability}</dd>
+                      </div>
+                      <div>
+                        <dt className="font-medium text-slate-500">Maintenance</dt>
+                        <dd className="text-slate-900">{host.maintenance}</dd>
+                      </div>
+                      <div>
+                        <dt className="font-medium text-slate-500">Response time</dt>
+                        <dd className="text-slate-900">Usually within 15 minutes</dd>
+                      </div>
+                    </dl>
+                    <button className="mt-6 w-full rounded-2xl bg-slate-900 px-4 py-3 text-sm font-medium text-white shadow-sm shadow-slate-900/20 transition hover:bg-slate-800">
+                      View profile
+                    </button>
+                  </article>
+                ))}
+                {filteredHosts.length === 0 && (
+                  <p className="rounded-3xl border border-dashed border-slate-200 bg-white px-6 py-10 text-center text-sm text-slate-500">
+                    No hosts match your search yet. Try another city or adjust your filters.
+                  </p>
+                )}
+              </div>
             </div>
-          ) : (
-            <div className="text-center py-12">
-              <Users className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
-              <p className="text-muted-foreground">No providers available</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
